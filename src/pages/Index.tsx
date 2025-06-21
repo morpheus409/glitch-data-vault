@@ -1,10 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { Search, Plus, Database, Shield, Eye } from 'lucide-react';
+import { supabase } from '../integrations/supabase/client';
 import SearchBar from '../components/SearchBar';
 import UserCard from '../components/UserCard';
 import AddUserModal from '../components/AddUserModal';
 import { UserData } from '../types/UserData';
+import { useToast } from '../hooks/use-toast';
 
 const Index = () => {
   const [users, setUsers] = useState<UserData[]>([]);
@@ -12,16 +14,44 @@ const Index = () => {
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
-    // Load users from localStorage on component mount
-    const savedUsers = localStorage.getItem('cybervault_users');
-    if (savedUsers) {
-      const parsedUsers = JSON.parse(savedUsers);
-      setUsers(parsedUsers);
-      setFilteredUsers(parsedUsers);
-    }
+    fetchUsers();
   }, []);
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching users:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load user data",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setUsers(data || []);
+      setFilteredUsers(data || []);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load user data",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     // Filter users based on search term
@@ -29,34 +59,91 @@ const Index = () => {
       setFilteredUsers(users);
     } else {
       const filtered = users.filter(user => 
-        user.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        user.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.phoneNumber.includes(searchTerm) ||
-        user.nin.includes(searchTerm) ||
-        user.drivingLicense.includes(searchTerm)
+        user.phone_number.includes(searchTerm) ||
+        (user.nin && user.nin.includes(searchTerm)) ||
+        (user.driving_license && user.driving_license.includes(searchTerm))
       );
       setFilteredUsers(filtered);
     }
   }, [searchTerm, users]);
 
-  const handleAddUser = (userData: Omit<UserData, 'id' | 'createdAt'>) => {
-    const newUser: UserData = {
-      ...userData,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString()
-    };
-    
-    const updatedUsers = [...users, newUser];
-    setUsers(updatedUsers);
-    localStorage.setItem('cybervault_users', JSON.stringify(updatedUsers));
-    setIsAddModalOpen(false);
+  const handleAddUser = async (userData: Omit<UserData, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .insert([{
+          full_name: userData.full_name,
+          email: userData.email,
+          phone_number: userData.phone_number,
+          age: userData.age,
+          nin: userData.nin,
+          driving_license: userData.driving_license,
+          residence_address: userData.residence_address,
+          photo: userData.photo
+        }])
+        .select();
+
+      if (error) {
+        console.error('Error adding user:', error);
+        toast({
+          title: "Error",
+          description: "Failed to add user",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (data && data.length > 0) {
+        setUsers(prev => [data[0], ...prev]);
+        setIsAddModalOpen(false);
+        toast({
+          title: "Success",
+          description: "Target added successfully",
+        });
+      }
+    } catch (error) {
+      console.error('Error adding user:', error);
+      toast({
+        title: "Error",
+        description: "Failed to add user",
+        variant: "destructive",
+      });
+    }
   };
 
-  const handleDeleteUser = (userId: string) => {
-    const updatedUsers = users.filter(user => user.id !== userId);
-    setUsers(updatedUsers);
-    localStorage.setItem('cybervault_users', JSON.stringify(updatedUsers));
-    setSelectedUser(null);
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      const { error } = await supabase
+        .from('user_profiles')
+        .delete()
+        .eq('id', userId);
+
+      if (error) {
+        console.error('Error deleting user:', error);
+        toast({
+          title: "Error",
+          description: "Failed to delete user",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setUsers(prev => prev.filter(user => user.id !== userId));
+      setSelectedUser(null);
+      toast({
+        title: "Success",
+        description: "Target deleted successfully",
+      });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete user",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
@@ -123,7 +210,11 @@ const Index = () => {
                 )}
               </div>
               
-              {filteredUsers.length > 0 ? (
+              {loading ? (
+                <div className="cyber-card p-8 rounded-lg text-center">
+                  <div className="text-cyber-green/70 font-mono">LOADING DATABASE...</div>
+                </div>
+              ) : filteredUsers.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {filteredUsers.map((user) => (
                     <div
@@ -135,7 +226,7 @@ const Index = () => {
                         {user.photo ? (
                           <img
                             src={user.photo}
-                            alt={user.fullName}
+                            alt={user.full_name}
                             className="w-12 h-12 rounded-full object-cover border-2 border-cyber-green/30"
                           />
                         ) : (
@@ -145,13 +236,13 @@ const Index = () => {
                         )}
                         <div className="flex-1 min-w-0">
                           <h4 className="font-semibold text-cyber-green truncate">
-                            {user.fullName}
+                            {user.full_name}
                           </h4>
                           <p className="text-cyber-green/70 text-sm truncate font-mono">
                             {user.email}
                           </p>
                           <p className="text-cyber-cyan text-xs font-mono">
-                            ID: {user.id}
+                            ID: {user.id.substring(0, 8)}...
                           </p>
                         </div>
                       </div>

@@ -1,13 +1,14 @@
 
 export interface UserData {
   id: string;
-  fullName: string;
+  full_name: string;
   email: string;
-  phoneNumber: string;
-  age: number;
-  nin: string; // National Identification Number
-  drivingLicense: string;
-  residenceAddress: string;
-  photo?: string;
-  createdAt: string;
+  phone_number: string;
+  age: number | null;
+  nin: string | null; // National Identification Number
+  driving_license: string | null;
+  residence_address: string | null;
+  photo?: string | null;
+  created_at: string;
+  updated_at: string;
 }

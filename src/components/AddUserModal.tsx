@@ -6,18 +6,18 @@ import { UserData } from '../types/UserData';
 interface AddUserModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAddUser: (userData: Omit<UserData, 'id' | 'createdAt'>) => void;
+  onAddUser: (userData: Omit<UserData, 'id' | 'created_at' | 'updated_at'>) => void;
 }
 
 const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser }) => {
   const [formData, setFormData] = useState({
-    fullName: '',
+    full_name: '',
     email: '',
-    phoneNumber: '',
+    phone_number: '',
     age: '',
     nin: '',
-    drivingLicense: '',
-    residenceAddress: '',
+    driving_license: '',
+    residence_address: '',
     photo: ''
   });
 
@@ -47,31 +47,31 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser 
     e.preventDefault();
     
     // Basic validation
-    if (!formData.fullName || !formData.email || !formData.phoneNumber) {
+    if (!formData.full_name || !formData.email || !formData.phone_number) {
       alert('Please fill in required fields');
       return;
     }
 
     onAddUser({
-      fullName: formData.fullName,
+      full_name: formData.full_name,
       email: formData.email,
-      phoneNumber: formData.phoneNumber,
-      age: parseInt(formData.age) || 0,
-      nin: formData.nin,
-      drivingLicense: formData.drivingLicense,
-      residenceAddress: formData.residenceAddress,
-      photo: formData.photo
+      phone_number: formData.phone_number,
+      age: formData.age ? parseInt(formData.age) : null,
+      nin: formData.nin || null,
+      driving_license: formData.driving_license || null,
+      residence_address: formData.residence_address || null,
+      photo: formData.photo || null
     });
 
     // Reset form
     setFormData({
-      fullName: '',
+      full_name: '',
       email: '',
-      phoneNumber: '',
+      phone_number: '',
       age: '',
       nin: '',
-      drivingLicense: '',
-      residenceAddress: '',
+      driving_license: '',
+      residence_address: '',
       photo: ''
     });
   };
@@ -133,8 +133,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser 
               </label>
               <input
                 type="text"
-                name="fullName"
-                value={formData.fullName}
+                name="full_name"
+                value={formData.full_name}
                 onChange={handleInputChange}
                 className="cyber-input w-full px-3 py-2 rounded"
                 placeholder="John Doe"
@@ -163,8 +163,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser 
               </label>
               <input
                 type="tel"
-                name="phoneNumber"
-                value={formData.phoneNumber}
+                name="phone_number"
+                value={formData.phone_number}
                 onChange={handleInputChange}
                 className="cyber-input w-full px-3 py-2 rounded"
                 placeholder="+1 234 567 8900"
@@ -208,8 +208,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser 
               </label>
               <input
                 type="text"
-                name="drivingLicense"
-                value={formData.drivingLicense}
+                name="driving_license"
+                value={formData.driving_license}
                 onChange={handleInputChange}
                 className="cyber-input w-full px-3 py-2 rounded"
                 placeholder="DL123456789"
@@ -222,8 +222,8 @@ const AddUserModal: React.FC<AddUserModalProps> = ({ isOpen, onClose, onAddUser 
               RESIDENCE ADDRESS
             </label>
             <textarea
-              name="residenceAddress"
-              value={formData.residenceAddress}
+              name="residence_address"
+              value={formData.residence_address}
               onChange={handleInputChange}
               className="cyber-input w-full px-3 py-2 rounded resize-none"
               rows={3}

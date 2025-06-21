@@ -22,7 +22,7 @@ interface UserCardProps {
 
 const UserCard: React.FC<UserCardProps> = ({ user, onDelete, onClose }) => {
   const handleDelete = () => {
-    if (window.confirm(`Delete target: ${user.fullName}?`)) {
+    if (window.confirm(`Delete target: ${user.full_name}?`)) {
       onDelete(user.id);
     }
   };
@@ -58,7 +58,7 @@ const UserCard: React.FC<UserCardProps> = ({ user, onDelete, onClose }) => {
         {user.photo ? (
           <img
             src={user.photo}
-            alt={user.fullName}
+            alt={user.full_name}
             className="w-24 h-24 rounded-full mx-auto border-4 border-cyber-green/30 object-cover"
           />
         ) : (
@@ -67,9 +67,9 @@ const UserCard: React.FC<UserCardProps> = ({ user, onDelete, onClose }) => {
           </div>
         )}
         <h2 className="text-xl font-cyber font-bold text-cyber-green mt-3 neon-glow">
-          {user.fullName}
+          {user.full_name}
         </h2>
-        <p className="text-cyber-cyan text-sm font-mono">ID: {user.id}</p>
+        <p className="text-cyber-cyan text-sm font-mono">ID: {user.id.substring(0, 8)}...</p>
       </div>
 
       {/* Details Section */}
@@ -87,47 +87,55 @@ const UserCard: React.FC<UserCardProps> = ({ user, onDelete, onClose }) => {
             <Phone className="h-4 w-4 text-cyber-cyan flex-shrink-0" />
             <div className="min-w-0 flex-1">
               <p className="text-xs text-cyber-green/70 font-mono uppercase">Phone</p>
-              <p className="text-cyber-green font-mono text-sm">{user.phoneNumber}</p>
+              <p className="text-cyber-green font-mono text-sm">{user.phone_number}</p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-3 p-2 bg-cyber-dark/50 rounded border border-cyber-green/20">
-            <Calendar className="h-4 w-4 text-cyber-cyan flex-shrink-0" />
-            <div className="min-w-0 flex-1">
-              <p className="text-xs text-cyber-green/70 font-mono uppercase">Age</p>
-              <p className="text-cyber-green font-mono text-sm">{user.age} years</p>
+          {user.age && (
+            <div className="flex items-center space-x-3 p-2 bg-cyber-dark/50 rounded border border-cyber-green/20">
+              <Calendar className="h-4 w-4 text-cyber-cyan flex-shrink-0" />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-cyber-green/70 font-mono uppercase">Age</p>
+                <p className="text-cyber-green font-mono text-sm">{user.age} years</p>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="flex items-center space-x-3 p-2 bg-cyber-dark/50 rounded border border-cyber-green/20">
-            <CreditCard className="h-4 w-4 text-cyber-cyan flex-shrink-0" />
-            <div className="min-w-0 flex-1">
-              <p className="text-xs text-cyber-green/70 font-mono uppercase">National ID</p>
-              <p className="text-cyber-green font-mono text-sm">{user.nin}</p>
+          {user.nin && (
+            <div className="flex items-center space-x-3 p-2 bg-cyber-dark/50 rounded border border-cyber-green/20">
+              <CreditCard className="h-4 w-4 text-cyber-cyan flex-shrink-0" />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-cyber-green/70 font-mono uppercase">National ID</p>
+                <p className="text-cyber-green font-mono text-sm">{user.nin}</p>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="flex items-center space-x-3 p-2 bg-cyber-dark/50 rounded border border-cyber-green/20">
-            <Car className="h-4 w-4 text-cyber-cyan flex-shrink-0" />
-            <div className="min-w-0 flex-1">
-              <p className="text-xs text-cyber-green/70 font-mono uppercase">License</p>
-              <p className="text-cyber-green font-mono text-sm">{user.drivingLicense}</p>
+          {user.driving_license && (
+            <div className="flex items-center space-x-3 p-2 bg-cyber-dark/50 rounded border border-cyber-green/20">
+              <Car className="h-4 w-4 text-cyber-cyan flex-shrink-0" />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-cyber-green/70 font-mono uppercase">License</p>
+                <p className="text-cyber-green font-mono text-sm">{user.driving_license}</p>
+              </div>
             </div>
-          </div>
+          )}
 
-          <div className="flex items-start space-x-3 p-2 bg-cyber-dark/50 rounded border border-cyber-green/20">
-            <MapPin className="h-4 w-4 text-cyber-cyan flex-shrink-0 mt-1" />
-            <div className="min-w-0 flex-1">
-              <p className="text-xs text-cyber-green/70 font-mono uppercase">Address</p>
-              <p className="text-cyber-green font-mono text-sm leading-relaxed">{user.residenceAddress}</p>
+          {user.residence_address && (
+            <div className="flex items-start space-x-3 p-2 bg-cyber-dark/50 rounded border border-cyber-green/20">
+              <MapPin className="h-4 w-4 text-cyber-cyan flex-shrink-0 mt-1" />
+              <div className="min-w-0 flex-1">
+                <p className="text-xs text-cyber-green/70 font-mono uppercase">Address</p>
+                <p className="text-cyber-green font-mono text-sm leading-relaxed">{user.residence_address}</p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Metadata */}
         <div className="border-t border-cyber-green/30 pt-3">
           <p className="text-xs text-cyber-green/50 font-mono">
-            ADDED: {new Date(user.createdAt).toLocaleString()}
+            ADDED: {new Date(user.created_at).toLocaleString()}
           </p>
         </div>
       </div>
