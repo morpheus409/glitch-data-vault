@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,15 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				// Cyberpunk theme colors
+				cyber: {
+					black: '#0a0a0a',
+					dark: '#111111',
+					green: '#00ff41',
+					cyan: '#00ffff',
+					purple: '#8b5cf6',
+					pink: '#ff10f0',
 				}
 			},
 			borderRadius: {
@@ -84,11 +94,44 @@ export default {
 					to: {
 						height: '0'
 					}
+				},
+				'glitch': {
+					'0%, 100%': { transform: 'translateX(0)' },
+					'20%': { transform: 'translateX(-2px)' },
+					'40%': { transform: 'translateX(2px)' },
+					'60%': { transform: 'translateX(-2px)' },
+					'80%': { transform: 'translateX(2px)' }
+				},
+				'scan': {
+					'0%': { transform: 'translateY(-100%)' },
+					'100%': { transform: 'translateY(100vh)' }
+				},
+				'terminal-blink': {
+					'0%, 50%': { opacity: '1' },
+					'51%, 100%': { opacity: '0' }
+				},
+				'neon-pulse': {
+					'0%, 100%': { 
+						textShadow: '0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor',
+						boxShadow: '0 0 5px currentColor'
+					},
+					'50%': { 
+						textShadow: '0 0 2px currentColor, 0 0 5px currentColor, 0 0 8px currentColor',
+						boxShadow: '0 0 2px currentColor'
+					}
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'glitch': 'glitch 0.3s ease-in-out infinite',
+				'scan': 'scan 2s linear infinite',
+				'terminal-blink': 'terminal-blink 1s infinite',
+				'neon-pulse': 'neon-pulse 2s ease-in-out infinite alternate'
+			},
+			fontFamily: {
+				'mono': ['JetBrains Mono', 'Courier New', 'monospace'],
+				'cyber': ['Orbitron', 'system-ui', 'sans-serif']
 			}
 		}
 	},
